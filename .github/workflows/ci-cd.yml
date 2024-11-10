@@ -9,7 +9,7 @@ jobs:
           npm ci
           npm run build
           npm run test:unit
-  build_image:
+  build_dev_image:
     runs-on: ubuntu-latest
     needs: unit_test
 
@@ -18,6 +18,46 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build the app
+        run: |
+          npm ci
+          npm run build
+      - name: Build Docker image
+        run: |
+          docker build -t todo-ui-app:dev .
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: |
+          docker tag todo-ui-app:dev hemn791/todo-ui-app:dev
+          docker push hemn791/todo-ui-app:dev
+  deploy-to-dev:
+    runs-on: ubuntu-latest
+    needs: build_dev_image
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            docker stop todo-ui-app-dev
+            docker rm todo-ui-app-dev
+            docker pull hemn791/todo-ui-app:dev
+            docker run -d --name todo-ui-app-dev -p 3001:80 hemn791/todo-ui-app:dev
+
+  build_production_image:
+    runs-on: ubuntu-latest
+    needs: deploy-to-dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build the production app
         run: |
           npm ci
           npm run build
@@ -32,9 +72,10 @@ jobs:
         run: |
           docker tag todo-ui-app:latest hemn791/todo-ui-app:latest
           docker push hemn791/todo-ui-app:latest
-  deploy:
+
+  deploy-to-production:
     runs-on: ubuntu-latest
-    needs: build_image
+    needs: build_production_image
 
     steps:
       - name: Deploy to VPS
@@ -44,7 +85,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_PRIVATE_KEY }}
           script: |
-            docker stop todo-ui-app-2
-            docker rm todo-ui-app-2
+            docker stop todo-ui-app-latest
+            docker rm todo-ui-app-latest
             docker pull hemn791/todo-ui-app:latest
-            docker run -d --name todo-ui-app-2 -p 80:80 hemn791/todo-ui-app:latest
+            docker run -d --name todo-ui-app-latest -p 80:80 hemn791/todo-ui-app:latest
