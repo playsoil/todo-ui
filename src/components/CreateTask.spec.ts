@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import fetchMock from 'fetch-mock'
-import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import fetchMock from '@fetch-mock/vitest'
+import { flushPromises, mount } from '@vue/test-utils'
 import TodoList from './TodoList.vue'
 import backendRoutes from '../utils/BackendRoutes'
 
@@ -10,6 +10,7 @@ const newTaskTitle = 'finish test case'
 // this the mocked response of  `create task` api
 const mockedNewTaskCreationResponse = {
   data: {
+    ID: 1,
     title: newTaskTitle,
   },
 }
@@ -22,21 +23,20 @@ const mockCreateTaskRequest = () => {
       { url: backendRoutes.create, method: 'POST' },
       JSON.stringify(mockedNewTaskCreationResponse),
     )
-}
 
-// after a task creation here is what we should check to be ok
-const assertNewTaskCreationChecks = (listWrapper: VueWrapper) => {
-  const firstTask = listWrapper.find('[data-testid=task-0]')
-
-  expect(firstTask.exists()).toBeTruthy()
-  expect(firstTask.text()).toContain(newTaskTitle)
-  console.log(firstTask.text())
-  expect(listWrapper.find('[data-testid=taskTitle]').element.value).toBe('')
+  fetchMock
+    .mockGlobal()
+    .route({ url: backendRoutes.list, method: 'GET' }, JSON.stringify({ data: [] }))
 }
 
 describe('creating a task', () => {
   beforeEach(() => {
+    fetchMock.mockReset()
     mockCreateTaskRequest()
+  })
+
+  afterEach(() => {
+    fetchMock.mockReset()
   })
 
   it('by press enter key', async () => {
@@ -47,7 +47,11 @@ describe('creating a task', () => {
     await taskTitle.trigger('keypress', { key: 'Enter' })
     await flushPromises() // wait for api call promises to flush
 
-    assertNewTaskCreationChecks(listWrapper)
+    const firstTask = listWrapper.find('[data-testid=task-1]')
+
+    expect(firstTask.exists()).toBeTruthy()
+    expect(firstTask.text()).toContain(newTaskTitle)
+    expect(listWrapper.find('[data-testid=taskTitle]').element.value).toBe('')
   })
 
   it('by clicking on add button', async () => {
@@ -58,6 +62,10 @@ describe('creating a task', () => {
     await createButton.trigger('click')
     await flushPromises()
 
-    assertNewTaskCreationChecks(listWrapper)
+    const firstTask = listWrapper.find('[data-testid=task-1]')
+
+    expect(firstTask.exists()).toBeTruthy()
+    expect(firstTask.text()).toContain(newTaskTitle)
+    expect(listWrapper.find('[data-testid=taskTitle]').element.value).toBe('')
   })
 })

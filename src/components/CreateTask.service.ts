@@ -1,6 +1,7 @@
+import type { Task } from '@/types/task'
 import BackendRoutes from '../utils/BackendRoutes'
 
-export default async (title: string): Promise<string> => {
+export default async (title: string): Promise<Task> => {
   const response = await fetch(BackendRoutes.create, {
     method: 'POST',
     headers: {
@@ -16,5 +17,8 @@ export default async (title: string): Promise<string> => {
 
   const content = await response.json()
 
-  return content.data.title
+  return {
+    ID: content.data.ID,
+    title: content.data.title,
+  }
 }
