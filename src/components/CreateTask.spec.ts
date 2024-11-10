@@ -19,14 +19,9 @@ const mockedNewTaskCreationResponse = {
 const mockCreateTaskRequest = () => {
   fetchMock
     .mockGlobal()
-    .route(
-      { url: backendRoutes.create, method: 'POST' },
-      JSON.stringify(mockedNewTaskCreationResponse),
-    )
+    .route(backendRoutes.create, JSON.stringify(mockedNewTaskCreationResponse), { method: 'POST' })
 
-  fetchMock
-    .mockGlobal()
-    .route({ url: backendRoutes.list, method: 'GET' }, JSON.stringify({ data: [] }))
+  fetchMock.mockGlobal().route(backendRoutes.list, JSON.stringify({ data: [] }), { method: 'GET' })
 }
 
 describe('creating a task', () => {
@@ -51,7 +46,7 @@ describe('creating a task', () => {
 
     expect(firstTask.exists()).toBeTruthy()
     expect(firstTask.text()).toContain(newTaskTitle)
-    expect(listWrapper.find('[data-testid=taskTitle]').element.value).toBe('')
+    expect((listWrapper.find('[data-testid=taskTitle]').element as HTMLInputElement).value).toBe('')
   })
 
   it('by clicking on add button', async () => {
@@ -66,6 +61,6 @@ describe('creating a task', () => {
 
     expect(firstTask.exists()).toBeTruthy()
     expect(firstTask.text()).toContain(newTaskTitle)
-    expect(listWrapper.find('[data-testid=taskTitle]').element.value).toBe('')
+    expect((listWrapper.find('[data-testid=taskTitle]').element as HTMLInputElement).value).toBe('')
   })
 })

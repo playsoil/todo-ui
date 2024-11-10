@@ -27,7 +27,7 @@ const mockTaskListRequest = () => {
   fetchMock.mockReset()
   fetchMock
     .mockGlobal()
-    .route({ url: backendRoutes.list, method: 'GET' }, JSON.stringify(mockedTaskListResponse))
+    .route(backendRoutes.list, JSON.stringify(mockedTaskListResponse), { method: 'GET' })
 }
 
 describe('list task', () => {
