@@ -1,0 +1,22 @@
+name: Create Image
+on:
+  workflow_run:
+    workflows:
+      - Run Unit Tests
+    types:
+      - completed
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build the app
+        run: |
+          npm ci
+          npm run build
+      - name: Build Docker image
+        run: |
+          docker build -t todo-ui-app:latest .
