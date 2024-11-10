@@ -34,7 +34,7 @@ jobs:
           docker push hemn791/todo-ui-app:latest
   deploy:
     runs-on: ubuntu-latest
-    needs: unit_test
+    needs: build_image
 
     steps:
       - name: Deploy to VPS
