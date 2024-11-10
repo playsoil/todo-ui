@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CreateTaskService } from './Service'
+import CreateTaskService from './CreateTask.service'
 
 const title = ref<string>('') // this variable is used to save new entered task title.
 const tasks = ref<string[]>([]) // we use this to keeps tasks in client side.

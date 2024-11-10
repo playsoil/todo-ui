@@ -1,6 +1,6 @@
 import BackendRoutes from '../utils/BackendRoutes'
 
-export const CreateTaskService = async (title: string): Promise<string> => {
+export default async (title: string): Promise<string> => {
   const response = await fetch(BackendRoutes.create, {
     method: 'POST',
     headers: {
