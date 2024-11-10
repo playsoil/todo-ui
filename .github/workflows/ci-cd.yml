@@ -42,4 +42,4 @@ jobs:
           script: |
             docker stop todo-ui--app-2 || true
             docker rm todo-ui--app-2 || true
-            docker run -d --name todo-ui--app-2 -p 3006:80 hemn791/todo-ui-app:latest
+            docker run -d --name todo-ui--app-2 -p 80:80 hemn791/todo-ui-app:latest
