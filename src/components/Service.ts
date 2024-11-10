@@ -1,4 +1,4 @@
-import BackendRoutes from './BackendRoutes'
+import BackendRoutes from '../utils/BackendRoutes'
 
 export const CreateTaskService = async (title: string): Promise<string> => {
   const response = await fetch(BackendRoutes.create, {

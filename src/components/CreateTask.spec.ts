@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import fetchMock from 'fetch-mock'
 import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
 import TodoList from './TodoList.vue'
-import backendRoutes from './BackendRoutes'
+import backendRoutes from '../utils/BackendRoutes'
 
 // this is the title of the task we create during tests
 const newTaskTitle = 'finish test case'
