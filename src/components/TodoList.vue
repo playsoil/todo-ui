@@ -27,7 +27,7 @@ const createTask = async (): Promise<void> => {
 </script>
 
 <template>
-  <h2>Your Todo:</h2>
+  <h2>Your Todos are here:</h2>
   <div>
     <input
       type="text"
