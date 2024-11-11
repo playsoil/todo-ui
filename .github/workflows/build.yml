@@ -1,0 +1,30 @@
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Docker hub tag to deploy'
+        required: true
+        type: string
+      app_base_url:
+        description: 'App Base URL'
+        required: true
+        type: string
+jobs:
+  docker-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build --build-arg VITE_BASE_URL=${{ inputs.app_base_url}}  -t todo-ui-app:${{inputs.tag}} .
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: |
+          docker tag todo-ui-app:${{inputs.tag}} hemn791/todo-ui-app:${{inputs.tag}}
+          docker push hemn791/todo-ui-app:${{inputs.tag}}

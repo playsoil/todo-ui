@@ -1,91 +1,50 @@
 name: Run CI CD
-'on': push
+on: push
+
+# here I decided to group them to make sure only on actions run at a time.
+concurrency:
+  group: ci-cd-group-${{ github.ref}}
+  cancel-in-progress: false
 jobs:
   unit_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
-          npm ci
-          npm run build
+          npm i
           npm run test:unit
+          npm run test:e2e
+
   build_dev_image:
-    runs-on: ubuntu-latest
+    uses: 'playsoil/todo-ui/.github/workflows/build.yml@master'
     needs: unit_test
+    secrets: inherit
+    with:
+      app_base_url: 'http://88.198.112.124:8081'
+      tag: 'dev'
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build the app
-        run: |
-          npm ci
-          npm run build
-      - name: Build Docker image
-        run: |
-          docker build -t todo-ui-app:dev .
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-
-      - name: Push Docker image
-        run: |
-          docker tag todo-ui-app:dev hemn791/todo-ui-app:dev
-          docker push hemn791/todo-ui-app:dev
   deploy-to-dev:
-    runs-on: ubuntu-latest
+    uses: 'playsoil/todo-ui/.github/workflows/deploy.yml@master'
     needs: build_dev_image
-
-    steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_PRIVATE_KEY }}
-          script: |
-            docker stop todo-ui-app-dev
-            docker rm todo-ui-app-dev
-            docker pull hemn791/todo-ui-app:dev
-            docker run -d --name todo-ui-app-dev -p 3001:80 hemn791/todo-ui-app:dev
+    secrets: inherit
+    with:
+      app_port: 81
+      app_base_url: 'http://88.198.112.124:8081'
+      tag: 'dev'
 
   build_production_image:
-    runs-on: ubuntu-latest
+    uses: 'playsoil/todo-ui/.github/workflows/build.yml@master'
     needs: deploy-to-dev
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build the production app
-        run: |
-          npm ci
-          npm run build
-      - name: Build Docker image
-        run: |
-          docker build -t todo-ui-app:latest .
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-
-      - name: Push Docker image
-        run: |
-          docker tag todo-ui-app:latest hemn791/todo-ui-app:latest
-          docker push hemn791/todo-ui-app:latest
+    secrets: inherit
+    with:
+      app_base_url: 'http://88.198.112.124:8080'
+      tag: 'latest'
 
   deploy-to-production:
-    runs-on: ubuntu-latest
+    uses: 'playsoil/todo-ui/.github/workflows/deploy.yml@master'
     needs: build_production_image
-
-    steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_PRIVATE_KEY }}
-          script: |
-            docker stop todo-ui-app-latest
-            docker rm todo-ui-app-latest
-            docker pull hemn791/todo-ui-app:latest
-            docker run -d --name todo-ui-app-latest -p 80:80 hemn791/todo-ui-app:latest
+    secrets: inherit
+    with:
+      app_port: 80
+      app_base_url: 'http://88.198.112.124:8080'
+      tag: 'latest'

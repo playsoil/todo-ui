@@ -1,0 +1,13 @@
+services:
+  ui:
+    image: hemn791/todo-ui-app:${IMAGE_TAG}
+    environment:
+      - APP_ENV=production
+    restart: always
+    ports:
+      - ${APP_PORT}:80
+    networks:
+      app:
+
+networks:
+  app:
