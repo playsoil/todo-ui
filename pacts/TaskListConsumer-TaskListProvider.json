@@ -1,0 +1,183 @@
+{
+  "consumer": {
+    "name": "TaskListConsumer"
+  },
+  "interactions": [
+    {
+      "description": "a GET request to the list endpoint",
+      "providerStates": [
+        {
+          "name": "there is a list of tasks"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": "application/json"
+        },
+        "method": "GET",
+        "path": "/todo"
+      },
+      "response": {
+        "body": {
+          "data": [
+            {
+              "ID": 1,
+              "title": "title"
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a get request",
+      "providerStates": [
+        {
+          "name": "there is a list of tasks"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": "application/json"
+        },
+        "method": "GET",
+        "path": "/todo"
+      },
+      "response": {
+        "body": {
+          "data": [
+            {
+              "ID": 1,
+              "title": "title"
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.data": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ]
+            }
+          },
+          "header": {},
+          "status": {}
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a get request to the list endpoint",
+      "providerStates": [
+        {
+          "name": "there is a list of tasks"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": "application/json"
+        },
+        "method": "GET",
+        "path": "/todo"
+      },
+      "response": {
+        "body": {
+          "data": [
+            {
+              "ID": 1,
+              "title": "title"
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.data": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ]
+            }
+          },
+          "header": {},
+          "status": {}
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "a request for all dogs with the builder pattern",
+      "providerStates": [
+        {
+          "name": "I have a list of dogs"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Accept": "application/json"
+        },
+        "method": "GET",
+        "path": "/todo"
+      },
+      "response": {
+        "body": {
+          "data": [
+            {
+              "ID": 1,
+              "title": "title"
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.data": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type",
+                  "min": 1
+                }
+              ]
+            }
+          },
+          "header": {},
+          "status": {}
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-js": {
+      "version": "13.1.4"
+    },
+    "pactRust": {
+      "ffi": "0.4.22",
+      "models": "1.2.3"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "TaskListProvider"
+  }
+}
