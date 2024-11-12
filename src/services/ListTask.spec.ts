@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import fetchMock from '@fetch-mock/vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import TodoList from './TodoList.vue'
+import TodoList from '@/components/TodoList.vue'
 import backendRoutes from '../utils/BackendRoutes'
 
 // this the mocked response of  `create task` api
@@ -23,7 +23,7 @@ export const mockedTaskListResponse = {
 }
 
 // we mock create task api to prevent real http call during tests
-const mockTaskListRequest = () => {
+export const mockTaskListRequest = () => {
   fetchMock.mockReset()
   fetchMock
     .mockGlobal()

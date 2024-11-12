@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import CreateTaskService from './CreateTask.service'
-import ListTaskService from './ListTask.service'
+import CreateTaskService from '@/services/CreateTask.service'
+import ListTaskService from '@/services/ListTask.service'
 import type { Task } from '@/types/task'
 
 const title = ref<string>('') // this variable is used to save new entered task title.
@@ -13,15 +13,13 @@ onMounted(async () => {
 
 const createTask = async (): Promise<void> => {
   // we create a new task only if user entered some text
-  if (title.value.trim()) {
-    try {
-      const newTaskTitle = await CreateTaskService(title.value)
-      tasks.value.push(newTaskTitle)
-      title.value = '' // clear the input after adding
-    } catch (err) {
-      // here we may do some error handling
-      throw err
-    }
+  try {
+    const newTaskTitle = await CreateTaskService(title.value)
+    tasks.value.push(newTaskTitle)
+    title.value = '' // clear the input after adding
+  } catch (err) {
+    // here we may do some error handling
+    throw err
   }
 }
 </script>
