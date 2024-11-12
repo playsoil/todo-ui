@@ -1,6 +1,6 @@
 describe('Creating a task', () => {
   it('Displays the todo list', () => {
-    const taskTitle = 'finish the test case'
+    const taskTitle = 'finish the test case' + Date.now()
 
     cy.visit('/')
 
@@ -10,6 +10,6 @@ describe('Creating a task', () => {
 
     cy.get("[data-testid='taskTitle']").should('have.value', '')
 
-    cy.get("[data-testid='task-0']").contains(taskTitle)
+    cy.get("[data-testid='taskList']").contains(taskTitle)
   })
 })
